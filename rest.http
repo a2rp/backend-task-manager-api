@@ -1,0 +1,72 @@
+### Home
+GET http://localhost:1203
+
+
+### Register
+POST http://localhost:1203/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Ashish1",
+  "email": "ashish1@example.com",
+  "password": "123456"
+}
+
+
+### Login
+POST http://localhost:1203/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "ashish@example.com",
+  "password": "123456"
+}
+
+### Login
+POST http://localhost:1203/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "ashish1@example.com",
+  "password": "123456"
+}
+
+
+### Create Task
+POST http://localhost:1203/api/tasks
+Content-Type: application/json
+
+{
+  "title": "Learn nodejs",
+  "description": "Build API's",
+  "status": "pending",
+  "priority": "low",
+  "dueDate": "2026-05-15"
+}
+
+
+### Get My Tasks
+GET http://localhost:1203/api/tasks
+
+
+### Get Single Task
+GET http://localhost:1203/api/tasks/69c5cb0cbd8152a3e41904cf
+
+
+### Update Task
+PUT http://localhost:1203/api/tasks/69c5cb0cbd8152a3e41904cf
+Content-Type: application/json
+
+{
+  "title": "Learn Advanced Backend",
+  "status": "in-progress",
+  "priority": "medium"
+}
+
+
+### Delete Task
+DELETE http://localhost:1203/api/tasks/69c5cb0cbd8152a3e41904cf
+
+
+### Logout
+POST http://localhost:1203/api/auth/logout
