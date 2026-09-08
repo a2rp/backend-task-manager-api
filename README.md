@@ -1,93 +1,138 @@
-# backend-task-manager-api
+# Backend Task Manager API
 
-Backend API for task manager CRUD with status, priority, due date, and user ownership using JWT and HttpOnly cookies.
+A secure REST API for managing personal tasks. Users register and sign in with JWTs stored in HttpOnly cookies, then create and manage only their own tasks.
 
 ## Features
 
-- Register user
-- Login user
-- Logout user
-- Create task
-- Get all tasks (user-specific)
-- Get single task (user-specific)
-- Update task (user-specific)
-- Delete task (user-specific)
-- Task status support
-- Task priority support
-- Due date support
-- Protected routes
-- JWT authentication
-- HttpOnly cookie based auth
-- MongoDB with Mongoose
+- User registration, login, current-user lookup, and logout
+- HttpOnly cookie-based JWT authentication
+- User-owned task CRUD operations
+- Task status, priority, description, and due date fields
+- MongoDB persistence with Mongoose validation
+- CORS credentials support for a browser frontend
+- Helmet security headers and request rate limiting
+- Consistent `apiUrl` metadata in every JSON response
+- Request and response status logging with the `[API]` prefix
+- Health endpoint for service checks
 
-## Tech Stack
+## Tech stack
 
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-- JWT
+- Node.js and Express
+- MongoDB and Mongoose
+- JSON Web Tokens
 - bcryptjs
 - cookie-parser
+- Helmet
+- express-rate-limit
 
-## Environment Variables
+## Requirements
 
-Create a .env file:
+- Node.js 18 or newer
+- MongoDB running locally or a reachable MongoDB deployment
 
-```bash
-PORT=1203
+## Configuration
+
+Copy `.env.example` to `.env` and replace the placeholder values:
+
+```env
+PORT=1198
 MONGO_URI=mongodb://127.0.0.1:27017/backend_task_manager_api
-JWT_SECRET=your_secret_key
+JWT_SECRET=replace_with_a_long_random_secret
 NODE_ENV=development
+CLIENT_ORIGIN=http://localhost:5173
+COOKIE_SECURE=false
+COOKIE_SAME_SITE=lax
 ```
 
-## Install
+Never commit `.env` or real credentials.
+
+## Install and run
 
 ```bash
 npm install
-```
-
-## Run
-
-```bash
 npm run dev
 ```
 
-## API Endpoints
+The API listens on `http://localhost:1198` by default. The server validates `MONGO_URI` and `JWT_SECRET` before starting.
 
-### Auth
+## API endpoints
 
-- POST /api/auth/register
-- POST /api/auth/login
-- POST /api/auth/logout
+All protected requests use the `token` HttpOnly cookie. Browser clients must send requests with credentials enabled.
+
+### System
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/` | No | Service information |
+| GET | `/health` | No | Health status |
+
+### Authentication
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/api/auth/register` | No | Create a user and issue a cookie |
+| POST | `/api/auth/login` | No | Verify credentials and issue a cookie |
+| GET | `/api/auth/me` | Yes | Return the signed-in user |
+| POST | `/api/auth/logout` | No | Clear the authentication cookie |
 
 ### Tasks
 
-- POST /api/tasks
-- GET /api/tasks
-- GET /api/tasks/:id
-- PUT /api/tasks/:id
-- DELETE /api/tasks/:id
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/api/tasks` | Yes | Create a task |
+| GET | `/api/tasks` | Yes | List the signed-in user's tasks |
+| GET | `/api/tasks/:id` | Yes | Read one owned task |
+| PUT | `/api/tasks/:id` | Yes | Update one owned task |
+| DELETE | `/api/tasks/:id` | Yes | Delete one owned task |
 
-### Task Fields
+Task status values are `pending`, `in-progress`, and `completed`. Priority values are `low`, `medium`, and `high`.
 
-- title
-- description
-- status → pending, in-progress, completed
-- priority → low, medium, high
-- dueDate
+## Response format
 
-## Notes
+Every JSON response starts with the requested API path:
 
-- Each task belongs to a specific user
-- Users can only access their own tasks
-- Authentication via HttpOnly cookies
-- Use withCredentials: true in frontend
+```json
+{
+  "apiUrl": "/api/tasks",
+  "message": "Tasks fetched successfully",
+  "tasks": []
+}
+```
 
-## Follow Me
+Errors return a safe public message. Internal database and token details are logged on the server and are not returned to clients.
 
-- GitHub: https://github.com/a2rp
-- Portfolio: https://www.ashishranjan.net
-- LinkedIn: https://www.linkedin.com/in/aashishranjan
-- Facebook: https://www.facebook.com/theash.ashish/
-- YouTube: https://www.youtube.com/@ashishranjan-ashz
+## Browser usage
+
+```js
+fetch("http://localhost:1198/api/tasks", {
+  credentials: "include",
+});
+```
+
+See [rest.http](./rest.http) for request examples.
+
+## Author
+
+**Ashish Ranjan**
+
+Full-Stack Web Developer
+
+## Links
+
+- Portfolio: [ashishranjan.in](https://ashishranjan.in/)
+- GitHub: [github.com/a2rp](https://github.com/a2rp)
+- CodePen: [codepen.io/ash1198](https://codepen.io/ash1198)
+- LinkedIn: [linkedin.com/in/aashishranjan](https://www.linkedin.com/in/aashishranjan)
+- Facebook: [facebook.com/theash.ashish](https://www.facebook.com/theash.ashish/)
+- YouTube: [Ashish Ranjan](https://www.youtube.com/@ashishranjan-ashz?sub_confirmation=1)
+- Email: [ash.ranjan09@gmail.com](mailto:ash.ranjan09@gmail.com)
+
+## Support
+
+- [Support page](https://a2rp-donation-page.netlify.app/)
+- [Buy Me a Coffee](https://buymeacoffee.com/a2rp)
+- [Patreon](https://www.patreon.com/a2rp)
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](./LICENSE).

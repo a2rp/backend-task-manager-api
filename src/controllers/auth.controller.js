@@ -1,5 +1,14 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
+const {
+    getAuthCookieOptions,
+    getClearCookieOptions,
+} = require("../utils/cookieOptions");
+
+const normalizeEmail = (email) => email.trim().toLowerCase();
+
+const isValidEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 const generateToken = (userId) => {
     return jwt.sign({ userId }, process.env.JWT_SECRET, {
@@ -11,13 +20,25 @@ const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        if (!name || !email || !password) {
+        if (!name?.trim() || !email?.trim() || !password) {
             return res.status(400).json({
                 message: "Name, email, and password are required",
             });
         }
 
-        const existingUser = await User.findOne({ email });
+        const normalizedEmail = normalizeEmail(email);
+
+        if (!isValidEmail(normalizedEmail)) {
+            return res.status(400).json({ message: "A valid email is required" });
+        }
+
+        if (password.length < 6) {
+            return res
+                .status(400)
+                .json({ message: "Password must be at least 6 characters" });
+        }
+
+        const existingUser = await User.findOne({ email: normalizedEmail });
 
         if (existingUser) {
             return res.status(400).json({
@@ -26,19 +47,14 @@ const registerUser = async (req, res) => {
         }
 
         const user = await User.create({
-            name,
-            email,
+            name: name.trim(),
+            email: normalizedEmail,
             password,
         });
 
         const token = generateToken(user._id);
 
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        res.cookie("token", token, getAuthCookieOptions());
 
         return res.status(201).json({
             message: "User registered successfully",
@@ -49,9 +65,12 @@ const registerUser = async (req, res) => {
             },
         });
     } catch (error) {
+        if (error.code === 11000) {
+            return res.status(409).json({ message: "User already exists" });
+        }
+
         return res.status(500).json({
             message: "Registration failed",
-            error: error.message,
         });
     }
 };
@@ -60,13 +79,19 @@ const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        if (!email || !password) {
+        if (!email?.trim() || !password) {
             return res.status(400).json({
                 message: "Email and password are required",
             });
         }
 
-        const user = await User.findOne({ email });
+        const normalizedEmail = normalizeEmail(email);
+
+        if (!isValidEmail(normalizedEmail)) {
+            return res.status(400).json({ message: "A valid email is required" });
+        }
+
+        const user = await User.findOne({ email: normalizedEmail });
 
         if (!user) {
             return res.status(401).json({
@@ -84,12 +109,7 @@ const loginUser = async (req, res) => {
 
         const token = generateToken(user._id);
 
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        res.cookie("token", token, getAuthCookieOptions());
 
         return res.status(200).json({
             message: "Login successful",
@@ -102,19 +122,24 @@ const loginUser = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             message: "Login failed",
-            error: error.message,
         });
     }
 };
 
+const getCurrentUser = async (req, res) => {
+    return res.status(200).json({
+        message: "Current user fetched successfully",
+        user: {
+            _id: req.user._id,
+            name: req.user.name,
+            email: req.user.email,
+        },
+    });
+};
+
 const logoutUser = async (req, res) => {
     try {
-        res.cookie("token", "", {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            expires: new Date(0),
-        });
+        res.clearCookie("token", getClearCookieOptions());
 
         return res.status(200).json({
             message: "Logout successful",
@@ -122,7 +147,6 @@ const logoutUser = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             message: "Logout failed",
-            error: error.message,
         });
     }
 };
@@ -130,5 +154,6 @@ const logoutUser = async (req, res) => {
 module.exports = {
     registerUser,
     loginUser,
+    getCurrentUser,
     logoutUser,
 };

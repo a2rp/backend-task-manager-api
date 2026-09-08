@@ -1,72 +1,63 @@
-### Home
-GET http://localhost:1203
+@baseUrl = http://localhost:1198
 
+### Home
+GET {{baseUrl}}/
+
+### Health
+GET {{baseUrl}}/health
 
 ### Register
-POST http://localhost:1203/api/auth/register
+POST {{baseUrl}}/api/auth/register
 Content-Type: application/json
 
 {
-  "name": "Ashish1",
-  "email": "ashish1@example.com",
-  "password": "123456"
+  "name": "Ashish",
+  "email": "ashish@example.com",
+  "password": "password123"
 }
 
-
 ### Login
-POST http://localhost:1203/api/auth/login
+POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
   "email": "ashish@example.com",
-  "password": "123456"
+  "password": "password123"
 }
 
-### Login
-POST http://localhost:1203/api/auth/login
+### Current user
+GET {{baseUrl}}/api/auth/me
+
+### Create task
+POST {{baseUrl}}/api/tasks
 Content-Type: application/json
 
 {
-  "email": "ashish1@example.com",
-  "password": "123456"
-}
-
-
-### Create Task
-POST http://localhost:1203/api/tasks
-Content-Type: application/json
-
-{
-  "title": "Learn nodejs",
-  "description": "Build API's",
+  "title": "Learn Node.js",
+  "description": "Build a task manager API",
   "status": "pending",
   "priority": "low",
   "dueDate": "2026-05-15"
 }
 
+### Get my tasks
+GET {{baseUrl}}/api/tasks
 
-### Get My Tasks
-GET http://localhost:1203/api/tasks
+### Get one task
+GET {{baseUrl}}/api/tasks/PASTE_TASK_ID_HERE
 
-
-### Get Single Task
-GET http://localhost:1203/api/tasks/69c5cb0cbd8152a3e41904cf
-
-
-### Update Task
-PUT http://localhost:1203/api/tasks/69c5cb0cbd8152a3e41904cf
+### Update task
+PUT {{baseUrl}}/api/tasks/PASTE_TASK_ID_HERE
 Content-Type: application/json
 
 {
-  "title": "Learn Advanced Backend",
+  "title": "Learn advanced backend development",
   "status": "in-progress",
   "priority": "medium"
 }
 
-
-### Delete Task
-DELETE http://localhost:1203/api/tasks/69c5cb0cbd8152a3e41904cf
-
+### Delete task
+DELETE {{baseUrl}}/api/tasks/PASTE_TASK_ID_HERE
 
 ### Logout
-POST http://localhost:1203/api/auth/logout
+POST {{baseUrl}}/api/auth/logout
