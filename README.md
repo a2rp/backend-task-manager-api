@@ -27,7 +27,7 @@ A secure REST API for managing personal tasks. Users register and sign in with J
 
 ## Requirements
 
-- Node.js 18 or newer
+- Node.js 20.19 or newer
 - MongoDB running locally or a reachable MongoDB deployment
 
 ## Configuration
@@ -37,12 +37,13 @@ Copy `.env.example` to `.env` and replace the placeholder values:
 ```env
 PORT=1198
 MONGO_URI=mongodb://127.0.0.1:27017/backend_task_manager_api
-JWT_SECRET=replace_with_a_long_random_secret
+JWT_SECRET=change_me_generate_a_unique_random_secret_of_at_least_32_chars
 NODE_ENV=development
-CLIENT_ORIGIN=http://localhost:5173
-COOKIE_SECURE=false
+CLIENT_ORIGINS=http://localhost:5173
 COOKIE_SAME_SITE=lax
 ```
+
+Replace the JWT secret with a unique random value of at least 32 characters. In production, provide trusted frontend origins as a comma-separated `CLIENT_ORIGINS` list. Cookies are always Secure in production; `COOKIE_SAME_SITE=none` is allowed only there.
 
 Never commit `.env` or real credentials.
 
@@ -53,7 +54,7 @@ npm install
 npm run dev
 ```
 
-The API listens on `http://localhost:1198` by default. The server validates `MONGO_URI` and `JWT_SECRET` before starting.
+The API listens on `http://localhost:1198` by default. The server validates `MONGO_URI`, `JWT_SECRET`, production origins, cookie settings, and the port before starting.
 
 ## API endpoints
 
@@ -85,7 +86,7 @@ All protected requests use the `token` HttpOnly cookie. Browser clients must sen
 | PUT | `/api/tasks/:id` | Yes | Update one owned task |
 | DELETE | `/api/tasks/:id` | Yes | Delete one owned task |
 
-Task status values are `pending`, `in-progress`, and `completed`. Priority values are `low`, `medium`, and `high`.
+Task status values are `pending`, `in-progress`, and `completed`. Priority values are `low`, `medium`, and `high`. Titles are limited to 200 characters and descriptions to 5,000 characters. Passwords must be at least 8 characters and no more than 72 UTF-8 bytes.
 
 ## Response format
 
@@ -110,6 +111,8 @@ fetch("http://localhost:1198/api/tasks", {
 ```
 
 See [rest.http](./rest.http) for request examples.
+
+The API uses per-process in-memory rate limits. Multi-instance deployments need a shared limiter store.
 
 ## Author
 
@@ -136,19 +139,3 @@ Full-Stack Web Developer
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](./LICENSE).
-
-## Links
-
-- Portfolio: [https://www.ashishranjan.net](https://www.ashishranjan.net)
-- GitHub: [https://github.com/a2rp](https://github.com/a2rp)
-- CodePen: [https://codepen.io/ash1198](https://codepen.io/ash1198)
-- LinkedIn: [https://www.linkedin.com/in/aashishranjan](https://www.linkedin.com/in/aashishranjan)
-- Facebook: [https://www.facebook.com/theash.ashish/](https://www.facebook.com/theash.ashish/)
-- YouTube: [https://www.youtube.com/@ashishranjan-ashz?sub_confirmation=1](https://www.youtube.com/@ashishranjan-ashz?sub_confirmation=1)
-- Email: [ash.ranjan09@gmail.com](mailto:ash.ranjan09@gmail.com)
-
-## Support
-
-- Support: [https://a2rp-donation-page.netlify.app/](https://a2rp-donation-page.netlify.app/)
-- Buy Me A Coffee: [https://buymeacoffee.com/a2rp](https://buymeacoffee.com/a2rp)
-- Patreon: [https://patreon.com/a2rp](https://patreon.com/a2rp)

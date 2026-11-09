@@ -1,16 +1,19 @@
 {
     "name": "backend-task-manager-api",
     "version": "1.0.0",
-    "description": "Backend API for task manager CRUD with status, priority, due date, and user ownership",
+    "description": "Express and MongoDB task management API with user-scoped CRUD, status, priority, and due-date validation",
     "main": "src/index.js",
     "scripts": {
         "dev": "nodemon src/index.js",
         "start": "node src/index.js"
     },
-    "keywords": [],
-    "author": "",
+    "keywords": ["nodejs", "express", "mongodb", "mongoose", "task-manager", "task-api", "rest-api", "jwt", "http-only-cookie", "user-ownership", "crud", "api-security"],
+    "author": "Ashish Ranjan",
     "license": "MIT",
     "type": "commonjs",
+    "engines": {
+        "node": ">=20.19.0"
+    },
     "dependencies": {
         "bcryptjs": "^3.0.3",
         "cookie-parser": "^1.4.7",

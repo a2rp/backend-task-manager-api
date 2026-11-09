@@ -13,7 +13,7 @@ Content-Type: application/json
 {
   "name": "Ashish",
   "email": "ashish@example.com",
-  "password": "password123"
+  "password": "ReplaceThisWithYourOwnPassphrase2026!"
 }
 
 ### Login
@@ -22,7 +22,7 @@ Content-Type: application/json
 
 {
   "email": "ashish@example.com",
-  "password": "password123"
+  "password": "ReplaceThisWithYourOwnPassphrase2026!"
 }
 
 ### Current user
@@ -37,7 +37,7 @@ Content-Type: application/json
   "description": "Build a task manager API",
   "status": "pending",
   "priority": "low",
-  "dueDate": "2026-05-15"
+  "dueDate": "2027-05-15"
 }
 
 ### Get my tasks
