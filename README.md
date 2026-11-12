@@ -43,7 +43,7 @@ CLIENT_ORIGINS=http://localhost:5173
 COOKIE_SAME_SITE=lax
 ```
 
-Replace the JWT secret with a unique random value of at least 32 characters. In production, provide trusted frontend origins as a comma-separated `CLIENT_ORIGINS` list. Cookies are always Secure in production; `COOKIE_SAME_SITE=none` is allowed only there.
+Replace the JWT secret with a unique random value of at least 32 characters. In production, provide trusted frontend origins as a comma-separated `CLIENT_ORIGINS` list. If the frontend and API are hosted on different sites, set `COOKIE_SAME_SITE=none`; serve the API over HTTPS because cross-site cookies require `Secure`. Cookies are always Secure in production.
 
 Never commit `.env` or real credentials.
 
